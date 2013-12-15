@@ -34,7 +34,7 @@ public:
 
     template<size_t N>
     constexpr array_view(std::array<T, N> const& a) noexcept
-        : length_(N), data_(a.data())
+        : length_(N), data_(&a[0])
     {}
 
     template<size_t N>
@@ -42,7 +42,7 @@ public:
         : length_(N), data_(&a[0])
     {}
 
-    explicit array_view(T const* a, size_type const n)
+    explicit constexpr array_view(T const* a, size_type const n) noexcept
         : length_(n), data_(a)
     {}
 
