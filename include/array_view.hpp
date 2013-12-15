@@ -13,7 +13,7 @@ template<class T>
 class array_view {
 public:
     // types
-    typedef T hoge_type;
+    typedef T value_type;
     typedef value_type const* pointer;
     typedef value_type const* const_pointer;
     typedef value_type const& reference;
@@ -32,8 +32,28 @@ public:
     constexpr array_view(std::array<T, N> const&) noexcept;
     template<size_t N>
     constexpr array_view(T (&)[N]) noexcept;
-    array_view(T const*, size_t const n);
+    explicit array_view(T const*, size_type const n);
     array_view& operator=(array_view const&) noexcept = default;
+
+    // iterator interfaces
+    constexpr const_iterator begin() noexcept const;
+    constexpr const_iterator end() noexcept const;
+    constexpr const_iterator cbegin() noexcept const;
+    constexpr const_iterator cend() noexcept const;
+    const_reverse_iterator begin() noexcept const;
+    const_reverse_iterator end() noexcept const;
+    const_reverse_iterator cbegin() noexcept const;
+    const_reverse_iterator cend() noexcept const;
+
+    // access
+    constexpr size_type size() noexcept const;
+    constexpr size_type length() noexcept const;
+    constexpr size_type max_size() noexcept const;
+    constexpr bool empty() noexcept const;
+    constexpr const_reference operator[](size_type const n) const;
+    constexpr const_pointer data() noexcept const;
+    constexpr const_reference front() noexcept const;
+    constexpr const_reference back() noexcept const;
 
 private:
     size_type const length_;
