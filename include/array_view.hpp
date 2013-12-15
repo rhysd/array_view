@@ -65,7 +65,7 @@ public:
     {
         return end();
     }
-    const_reverse_iterator rbegin() const noexcept
+    const_reverse_iterator rbegin() const
     {
         return {end()};
     }
