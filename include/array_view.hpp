@@ -29,18 +29,23 @@ public:
     constexpr array_view() noexcept
         : length_(0), data_(nullptr)
     {}
+
     constexpr array_view(array_view const&) noexcept = default;
+
     template<size_t N>
     constexpr array_view(std::array<T, N> const& a) noexcept
         : length_(N), data_(a.data())
     {}
+
     template<size_t N>
     constexpr array_view(T const (& a)[N]) noexcept
         : length_(N), data_(&a[0])
     {}
+
     explicit array_view(T const* a, size_type const n)
         : length_(n), data_(a)
     {}
+
     array_view& operator=(array_view const&) noexcept = default;
 
     // iterator interfaces
