@@ -26,34 +26,94 @@ public:
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
     // ctors and copy operators
-    constexpr array_view() noexept;
+    constexpr array_view() noexcept
+    {
+        // TODO
+    }
     constexpr array_view(array_view const&) noexcept = default;
     template<size_t N>
-    constexpr array_view(std::array<T, N> const&) noexcept;
+    constexpr array_view(std::array<T, N> const&) noexcept
+    {
+        // TODO
+    }
     template<size_t N>
-    constexpr array_view(T (&)[N]) noexcept;
-    explicit array_view(T const*, size_type const n);
+    constexpr array_view(T (&)[N]) noexcept
+    {
+        // TODO
+    }
+    explicit array_view(T const*, size_type const n)
+    {
+        // TODO
+    }
     array_view& operator=(array_view const&) noexcept = default;
 
     // iterator interfaces
-    constexpr const_iterator begin() noexcept const;
-    constexpr const_iterator end() noexcept const;
-    constexpr const_iterator cbegin() noexcept const;
-    constexpr const_iterator cend() noexcept const;
-    const_reverse_iterator begin() noexcept const;
-    const_reverse_iterator end() noexcept const;
-    const_reverse_iterator cbegin() noexcept const;
-    const_reverse_iterator cend() noexcept const;
+    constexpr const_iterator begin() const noexcept
+    {
+        return data_;
+    }
+    constexpr const_iterator end() const noexcept
+    {
+        return data_ + length_;
+    }
+    constexpr const_iterator cbegin() const noexcept
+    {
+        return begin();
+    }
+    constexpr const_iterator cend() const noexcept
+    {
+        return end();
+    }
+    const_reverse_iterator rbegin() const noexcept
+    {
+        return {end()};
+    }
+    const_reverse_iterator rend() const
+    {
+        return {begin()};
+    }
+    const_reverse_iterator crbegin() const
+    {
+        return rbegin();
+    }
+    const_reverse_iterator crend() const
+    {
+        return rend();
+    }
 
     // access
-    constexpr size_type size() noexcept const;
-    constexpr size_type length() noexcept const;
-    constexpr size_type max_size() noexcept const;
-    constexpr bool empty() noexcept const;
-    constexpr const_reference operator[](size_type const n) const;
-    constexpr const_pointer data() noexcept const;
-    constexpr const_reference front() noexcept const;
-    constexpr const_reference back() noexcept const;
+    constexpr size_type size() const noexcept
+    {
+        return length_;
+    }
+    constexpr size_type length() const noexcept
+    {
+        return size();
+    }
+    constexpr size_type max_size() const noexcept
+    {
+        return size();
+    }
+    constexpr bool empty() const noexcept
+    {
+        return length_ == 0;
+    }
+    constexpr const_reference operator[](size_type const n) const noexcept
+    {
+        return *(data_ + n);
+    }
+    constexpr const_pointer data() const noexcept
+    {
+        return data_;
+    }
+    constexpr const_reference front() const noexcept
+    {
+        return *data_;
+    }
+    constexpr const_reference back() const noexcept
+    {
+        return *(data_ + length_);
+    }
 
 private:
     size_type const length_;
