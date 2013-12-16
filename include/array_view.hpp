@@ -4,6 +4,9 @@
 #include <cstddef>
 #include <iterator>
 #include <array>
+#include <vector>
+#include <stdexcept>
+#include <memory>
 
 namespace arv {
 
@@ -25,21 +28,27 @@ public:
     typedef std::reverse_iterator<iterator> reverse_iterator;
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-    // ctors and copy operators
+    // ctors and assing operators
     constexpr array_view() noexcept
         : length_(0), data_(nullptr)
     {}
 
     constexpr array_view(array_view const&) noexcept = default;
 
+    // Note:
+    // This constructor can't be constexpr because & operator can't be constexpr.
     template<size_t N>
-    constexpr array_view(std::array<T, N> const& a) noexcept
-        : length_(N), data_(&a[0])
+    array_view(std::array<T, N> const& a) noexcept
+        : length_(N), data_(a.data())
     {}
 
+    // Note:
+    // This constructor can't be constexpr because & operator can't be constexpr.
     template<size_t N>
-    constexpr array_view(T const (& a)[N]) noexcept
-        : length_(N), data_(&a[0])
+    array_view(T const (& a)[N]) noexcept
+        : length_(N), data_(std::addressof(a[0]))
+    {}
+
     {}
 
     explicit constexpr array_view(T const* a, size_type const n) noexcept
