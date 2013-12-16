@@ -28,7 +28,7 @@ public:
     typedef std::reverse_iterator<iterator> reverse_iterator;
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-    // ctors and assing operators
+    // ctors and assigning operators
     constexpr array_view() noexcept
         : length_(0), data_(nullptr)
     {}
