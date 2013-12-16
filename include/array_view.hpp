@@ -129,7 +129,7 @@ public:
     }
     constexpr const_reference back() const noexcept
     {
-        return *(data_ + length_);
+        return *(data_ + length_ - 1);
     }
 
 private:
