@@ -49,6 +49,8 @@ public:
         : length_(N), data_(std::addressof(a[0]))
     {}
 
+    array_view(std::vector<T> const& v) noexcept
+        : length_(v.size()), data_(v.data())
     {}
 
     explicit constexpr array_view(T const* a, size_type const n) noexcept
@@ -110,6 +112,11 @@ public:
     }
     constexpr const_reference operator[](size_type const n) const noexcept
     {
+        return *(data_ + n);
+    }
+    constexpr const_reference at(size_type const n) const
+    {
+        if (n >= length_) throw std::out_of_range("array_view::at");
         return *(data_ + n);
     }
     constexpr const_pointer data() const noexcept
