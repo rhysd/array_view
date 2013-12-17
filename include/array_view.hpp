@@ -17,6 +17,7 @@ namespace arv {
 
 using std::size_t;
 
+// array_view {{{
 template<class T>
 class array_view {
 public:
@@ -154,8 +155,9 @@ private:
     size_type const length_;
     const_pointer const data_;
 };
+// }}}
 
-namespace detail {
+namespace detail { // {{{
     // It's never defined, just an enabler.
     extern void * enabler;
 
@@ -173,17 +175,11 @@ namespace detail {
         : std::is_same<T, U>::type
     {};
 } // namespace detail
+// }}}
 
-//
-// compare
-// TODO: use template and SFINAE not to repeat yourself for arv::array_view, std::array, int [], 
-//
-
-//
-// equal
-//
-// {{{
+// compare {{{
 namespace detail {
+    // TODO check ArrayL and ArrayR are any of array_view, std::array, boost::array, raw array and std::vector
     template<class ArrayL, class ArrayR>
     inline constexpr
     bool operator_equal_impl(ArrayL const& lhs, size_t const lhs_size, ArrayR const& rhs, size_t const rhs_size)
@@ -332,9 +328,7 @@ constexpr bool operator!=(T1 const(& lhs)[N], array_view<T2> const& rhs)
 
 // }}}
 
-//
-// helpers to construct view
-//
+// helpers to construct view {{{
 template<class Array>
 inline
 constexpr auto make_view(Array const& a)
@@ -349,6 +343,8 @@ constexpr array_view<T> make_view(T const* p, typename array_view<T>::size_type 
 {
     return {p, n};
 }
+
+// }}}
 
 } // namespace arv
 
