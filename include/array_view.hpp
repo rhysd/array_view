@@ -9,8 +9,8 @@
 #include <memory>
 
 namespace boost {
-    template<class T, std::size_t N>
-    class array;
+template<class T, std::size_t N>
+class array;
 } // namespace boost
 
 namespace arv {
@@ -163,16 +163,13 @@ template<class T1, class T2>
 inline
 constexpr bool operator==(array_view<T1> const& lhs, array_view<T2> const& rhs)
 {
-    auto litr = lhs.begin();
-    auto ritr = rhs.begin();
-    auto const llast = lhs.end();
-    auto const rlast = rhs.end();
-
-    if (llast - litr != rlast - ritr) {
+    if (lhs.length() != rhs.length()) {
         return false;
     }
 
-    for (; litr != llast; ++litr, ++ritr) {
+    for (auto litr = lhs.begin(), ritr = rhs.begin();
+         litr != lhs.end();
+         ++litr, ++ritr) {
         if (!(*litr == *ritr)) {
             return false;
         }
