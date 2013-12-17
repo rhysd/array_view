@@ -8,6 +8,11 @@
 #include <stdexcept>
 #include <memory>
 
+namespace boost {
+template<class T, std::size_t N>
+class array;
+} // namespace boost
+
 namespace arv {
 
 using std::size_t;
@@ -15,7 +20,9 @@ using std::size_t;
 template<class T>
 class array_view {
 public:
+    //
     // types
+    //
     typedef T value_type;
     typedef value_type const* pointer;
     typedef value_type const* const_pointer;
@@ -28,7 +35,9 @@ public:
     typedef std::reverse_iterator<iterator> reverse_iterator;
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-    // ctors and assigning operators
+    //
+    // ctors and assign operators
+    //
     constexpr array_view() noexcept
         : length_(0), data_(nullptr)
     {}
@@ -49,6 +58,11 @@ public:
         : length_(N), data_(std::addressof(a[0]))
     {}
 
+    template<size_t N>
+    array_view(boost::array<T, N> const& a) noexcept
+        : length_(N), data_(a.data())
+    {}
+
     array_view(std::vector<T> const& v) noexcept
         : length_(v.size()), data_(v.data())
     {}
@@ -59,7 +73,9 @@ public:
 
     array_view& operator=(array_view const&) noexcept = default;
 
+    //
     // iterator interfaces
+    //
     constexpr const_iterator begin() const noexcept
     {
         return data_;
@@ -93,7 +109,9 @@ public:
         return rend();
     }
 
+    //
     // access
+    //
     constexpr size_type size() const noexcept
     {
         return length_;
@@ -136,6 +154,52 @@ private:
     size_type const length_;
     const_pointer const data_;
 };
+
+//
+// compare
+// TODO: use template and SFINAE not to repeat yourself for arv::array_view, std::array, int [], 
+//
+template<class T1, class T2>
+inline
+constexpr bool operator==(array_view<T1> const& lhs, array_view<T2> const& rhs)
+{
+    if (lhs.length() != rhs.length()) {
+        return false;
+    }
+
+    for (auto litr = lhs.begin(), ritr = rhs.begin();
+         litr != lhs.end();
+         ++litr, ++ritr) {
+        if (!(*litr == *ritr)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+template<class T1, class T2>
+inline
+constexpr bool operator!=(array_view<T1> const& lhs, array_view<T2> const& rhs)
+{
+    return !(lhs == rhs);
+}
+
+//
+// helpers to construct view
+//
+template<class Array>
+constexpr auto make_view(Array const& a)
+    -> array_view<typename Array::value_type>
+{
+    return {a};
+}
+
+template<class T>
+array_view<T> make_view(T const* p, typename array_view<T>::size_type const n)
+{
+    return {p, n};
+}
 
 } // namespace arv
 
