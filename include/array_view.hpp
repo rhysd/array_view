@@ -20,7 +20,9 @@ using std::size_t;
 template<class T>
 class array_view {
 public:
+    //
     // types
+    //
     typedef T value_type;
     typedef value_type const* pointer;
     typedef value_type const* const_pointer;
@@ -33,7 +35,9 @@ public:
     typedef std::reverse_iterator<iterator> reverse_iterator;
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
+    //
     // ctors and assing operators
+    //
     constexpr array_view() noexcept
         : length_(0), data_(nullptr)
     {}
@@ -69,7 +73,9 @@ public:
 
     array_view& operator=(array_view const&) noexcept = default;
 
+    //
     // iterator interfaces
+    //
     constexpr const_iterator begin() const noexcept
     {
         return data_;
@@ -103,7 +109,9 @@ public:
         return rend();
     }
 
+    //
     // access
+    //
     constexpr size_type size() const noexcept
     {
         return length_;
