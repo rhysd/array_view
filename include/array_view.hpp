@@ -8,6 +8,11 @@
 #include <stdexcept>
 #include <memory>
 
+namespace boost {
+    template<class T, std::size_t N>
+    class array;
+} // namespace boost
+
 namespace arv {
 
 using std::size_t;
@@ -47,6 +52,11 @@ public:
     template<size_t N>
     array_view(T const (& a)[N]) noexcept
         : length_(N), data_(std::addressof(a[0]))
+    {}
+
+    template<size_t N>
+    array_view(boost::array<T, N> const& a) noexcept
+        : length_(N), data_(a.data())
     {}
 
     array_view(std::vector<T> const& v) noexcept
