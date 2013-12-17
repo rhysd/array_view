@@ -155,6 +155,39 @@ private:
     const_pointer const data_;
 };
 
+//
+// compare
+// TODO: use template and SFINAE not to repeat yourself for arv::array_view, std::array, int [], 
+//
+template<class T1, class T2>
+inline
+constexpr bool operator==(array_view<T1> const& lhs, array_view<T2> const& rhs)
+{
+    auto litr = lhs.begin();
+    auto ritr = rhs.begin();
+    auto const llast = lhs.end();
+    auto const rlast = rhs.end();
+
+    if (llast - litr != rlast - ritr) {
+        return false;
+    }
+
+    for (; litr != llast; ++litr, ++ritr) {
+        if (!(*litr == *ritr)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+template<class T1, class T2>
+inline
+constexpr bool operator!=(array_view<T1> const& lhs, array_view<T2> const& rhs)
+{
+    return !(lhs == rhs);
+}
+
 } // namespace arv
 
 #endif    // ARV_ARRAY_VIEW_HPP_INCLUDED
