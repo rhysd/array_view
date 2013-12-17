@@ -188,6 +188,22 @@ constexpr bool operator!=(array_view<T1> const& lhs, array_view<T2> const& rhs)
     return !(lhs == rhs);
 }
 
+//
+// helpers to construct view
+//
+template<class Array>
+constexpr auto make_view(Array const& a)
+    -> array_view<typename Array::value_type>
+{
+    return {a};
+}
+
+template<class T>
+array_view<T> make_view(T const* p, typename array_view<T>::size_type const n)
+{
+    return {p, n};
+}
+
 } // namespace arv
 
 #endif    // ARV_ARRAY_VIEW_HPP_INCLUDED
