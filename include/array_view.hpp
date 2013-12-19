@@ -217,53 +217,17 @@ bool operator==(array_view<T1> const& lhs, array_view<T2> const& rhs)
     return detail::operator_equal_impl(lhs, lhs.length(), rhs, rhs.length());
 }
 
-template<class T1, class T2>
+template<
+    class T,
+    class Array,
+    class = typename std::enable_if<
+        detail::is_array_class<Array>::value
+    >::type
+>
 inline constexpr
-bool operator!=(array_view<T1> const& lhs, array_view<T2> const& rhs)
-{
-    return !(lhs == rhs);
-}
-
-template<class T1, class T2, size_t N>
-inline constexpr
-bool operator==(array_view<T1> const& lhs, std::array<T2, N> const& rhs)
-{
-    return detail::operator_equal_impl(lhs, lhs.length(), rhs, N);
-}
-
-template<class T1, class T2, size_t N>
-inline constexpr
-bool operator!=(array_view<T1> const& lhs, std::array<T2, N> const& rhs)
-{
-    return !(lhs == rhs);
-}
-
-template<class T1, class T2, size_t N>
-inline constexpr
-bool operator==(array_view<T1> const& lhs, boost::array<T2, N> const& rhs)
-{
-    return detail::operator_equal_impl(lhs, lhs.length(), rhs, N);
-}
-
-template<class T1, class T2, size_t N>
-inline constexpr
-bool operator!=(array_view<T1> const& lhs, boost::array<T2, N> const& rhs)
-{
-    return !(lhs == rhs);
-}
-
-template<class T1, class T2>
-inline constexpr
-bool operator==(array_view<T1> const& lhs, std::vector<T2> const& rhs)
+bool operator==(array_view<T> const& lhs, Array const& rhs)
 {
     return detail::operator_equal_impl(lhs, lhs.length(), rhs, rhs.size());
-}
-
-template<class T1, class T2>
-inline constexpr
-bool operator!=(array_view<T1> const& lhs, std::vector<T2> const& rhs)
-{
-    return !(lhs == rhs);
 }
 
 template<class T1, class T2, size_t N>
@@ -273,76 +237,64 @@ bool operator==(array_view<T1> const& lhs, T2 const (& rhs)[N])
     return detail::operator_equal_impl(lhs, lhs.length(), rhs, N);
 }
 
-template<class T1, class T2, size_t N>
+template<
+    class T,
+    class Array,
+    class = typename std::enable_if<
+        detail::is_array<Array>::value
+    >::type
+>
 inline constexpr
-bool operator!=(array_view<T1> const& lhs, T2 const (& rhs)[N])
+bool operator!=(array_view<T> const& lhs, Array const& rhs)
 {
     return !(lhs == rhs);
 }
 
-template<class T1, size_t N, class T2>
+template<
+    class Array,
+    class T,
+    class = typename std::enable_if<
+        detail::is_array<Array>::value
+    >::type
+>
 inline constexpr
-bool operator==(std::array<T1, N> const& lhs, array_view<T2> const& rhs)
+bool operator==(Array const& lhs, array_view<T> const& rhs)
 {
     return rhs == lhs;
 }
 
-template<class T1, size_t N, class T2>
+template<
+    class Array,
+    class T,
+    class = typename std::enable_if<
+        detail::is_array<Array>::value,
+        Array
+    >::type
+>
 inline constexpr
-bool operator!=(std::array<T1, N> const& lhs, array_view<T2> const& rhs)
+bool operator!=(Array const& lhs, array_view<T> const& rhs)
 {
-    return rhs != lhs;
+    return !(rhs == lhs);
 }
-
-template<class T1, size_t N, class T2>
-inline constexpr
-bool operator==(boost::array<T1, N> const& lhs, array_view<T2> const& rhs)
-{
-    return rhs == lhs;
-}
-
-template<class T1, size_t N, class T2>
-inline constexpr
-bool operator!=(boost::array<T1, N> const& lhs, array_view<T2> const& rhs)
-{
-    return rhs != lhs;
-}
-
-template<class T1, class T2>
-inline constexpr
-bool operator==(std::vector<T1> const& lhs, array_view<T2> const& rhs)
-{
-    return rhs == lhs;
-}
-
-template<class T1, class T2>
-inline constexpr
-bool operator!=(std::vector<T1> const& lhs, array_view<T2> const& rhs)
-{
-    return rhs != lhs;
-}
-
-template<class T1, size_t N, class T2>
-inline constexpr
-bool operator==(T1 const(& lhs)[N], array_view<T2> const& rhs)
-{
-    return rhs == lhs;
-}
-
-template<class T1, size_t N, class T2>
-inline constexpr
-bool operator!=(T1 const(& lhs)[N], array_view<T2> const& rhs)
-{
-    return rhs != lhs;
-}
-
 // }}}
 
 // helpers to construct view {{{
-template<class Array>
-inline
-constexpr auto make_view(Array const& a)
+template<
+    class Array,
+    class = typename std::enable_if<
+        detail::is_array_class<Array>::value
+    >::type
+>
+inline constexpr
+auto make_view(Array const& a)
     -> array_view<typename Array::value_type>
+{
+    return {a};
+}
+
+template< class T, size_t N>
+inline constexpr
+array_view<T> make_view(T const (&a)[N])
 {
     return {a};
 }
