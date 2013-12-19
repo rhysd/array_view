@@ -7,6 +7,7 @@
 #include <vector>
 #include <stdexcept>
 #include <memory>
+#include <type_traits>
 
 namespace boost {
 template<class T, std::size_t N>
@@ -161,26 +162,32 @@ namespace detail { // {{{
     // It's never defined, just an enabler.
     extern void * enabler;
 
-    template<class T, class U, class... Args>
-    struct is_any_of
-        : std::conditional<
-            std::is_same<T, U>::value,
-            std::true_type,
-            is_any_of<T, Args...>
-        >::type
-    {};
-
-    template<class T, class U>
-    struct is_any_of<T, U>
-        : std::is_same<T, U>::type
-    {};
+    template<class Array>
+    struct is_array {
+        static bool const value = false;
+    };
+    template<class T, size_t N>
+    struct is_array<std::array<T, N>>{
+        static bool const value = true;
+    };
+    template<class T, size_t N>
+    struct is_array<boost::array<T, N>>{
+        static bool const value = true;
+    };
+    template<class T, size_t N>
+    struct is_array<T (&)[N]>{
+        static bool const value = true;
+    };
+    template<class T>
+    struct is_array<std::vector<T>>{
+        static bool const value = true;
+    };
 } // namespace detail
 // }}}
 
 // compare {{{
 namespace detail {
-    // TODO check ArrayL and ArrayR are any of array_view, std::array, boost::array, raw array and std::vector
-    template<class ArrayL, class ArrayR>
+    template< class ArrayL, class ArrayR >
     inline constexpr
     bool operator_equal_impl(ArrayL const& lhs, size_t const lhs_size, ArrayR const& rhs, size_t const rhs_size)
     {
@@ -201,127 +208,127 @@ namespace detail {
 } // namespace detail
 
 template<class T1, class T2>
-inline
-constexpr bool operator==(array_view<T1> const& lhs, array_view<T2> const& rhs)
+inline constexpr
+bool operator==(array_view<T1> const& lhs, array_view<T2> const& rhs)
 {
     return detail::operator_equal_impl(lhs, lhs.length(), rhs, rhs.length());
 }
 
 template<class T1, class T2>
-inline
-constexpr bool operator!=(array_view<T1> const& lhs, array_view<T2> const& rhs)
+inline constexpr
+bool operator!=(array_view<T1> const& lhs, array_view<T2> const& rhs)
 {
     return !(lhs == rhs);
 }
 
 template<class T1, class T2, size_t N>
-inline
-constexpr bool operator==(array_view<T1> const& lhs, std::array<T2, N> const& rhs)
+inline constexpr
+bool operator==(array_view<T1> const& lhs, std::array<T2, N> const& rhs)
 {
     return detail::operator_equal_impl(lhs, lhs.length(), rhs, N);
 }
 
 template<class T1, class T2, size_t N>
-inline
-constexpr bool operator!=(array_view<T1> const& lhs, std::array<T2, N> const& rhs)
+inline constexpr
+bool operator!=(array_view<T1> const& lhs, std::array<T2, N> const& rhs)
 {
     return !(lhs == rhs);
 }
 
 template<class T1, class T2, size_t N>
-inline
-constexpr bool operator==(array_view<T1> const& lhs, boost::array<T2, N> const& rhs)
+inline constexpr
+bool operator==(array_view<T1> const& lhs, boost::array<T2, N> const& rhs)
 {
     return detail::operator_equal_impl(lhs, lhs.length(), rhs, N);
 }
 
 template<class T1, class T2, size_t N>
-inline
-constexpr bool operator!=(array_view<T1> const& lhs, boost::array<T2, N> const& rhs)
+inline constexpr
+bool operator!=(array_view<T1> const& lhs, boost::array<T2, N> const& rhs)
 {
     return !(lhs == rhs);
 }
 
 template<class T1, class T2>
-inline
-constexpr bool operator==(array_view<T1> const& lhs, std::vector<T2> const& rhs)
+inline constexpr
+bool operator==(array_view<T1> const& lhs, std::vector<T2> const& rhs)
 {
     return detail::operator_equal_impl(lhs, lhs.length(), rhs, rhs.size());
 }
 
 template<class T1, class T2>
-inline
-constexpr bool operator!=(array_view<T1> const& lhs, std::vector<T2> const& rhs)
+inline constexpr
+bool operator!=(array_view<T1> const& lhs, std::vector<T2> const& rhs)
 {
     return !(lhs == rhs);
 }
 
 template<class T1, class T2, size_t N>
-inline
-constexpr bool operator==(array_view<T1> const& lhs, T2 const (& rhs)[N])
+inline constexpr
+bool operator==(array_view<T1> const& lhs, T2 const (& rhs)[N])
 {
     return detail::operator_equal_impl(lhs, lhs.length(), rhs, N);
 }
 
 template<class T1, class T2, size_t N>
-inline
-constexpr bool operator!=(array_view<T1> const& lhs, T2 const (& rhs)[N])
+inline constexpr
+bool operator!=(array_view<T1> const& lhs, T2 const (& rhs)[N])
 {
     return !(lhs == rhs);
 }
 
 template<class T1, size_t N, class T2>
-inline
-constexpr bool operator==(std::array<T1, N> const& lhs, array_view<T2> const& rhs)
+inline constexpr
+bool operator==(std::array<T1, N> const& lhs, array_view<T2> const& rhs)
 {
     return rhs == lhs;
 }
 
 template<class T1, size_t N, class T2>
-inline
-constexpr bool operator!=(std::array<T1, N> const& lhs, array_view<T2> const& rhs)
+inline constexpr
+bool operator!=(std::array<T1, N> const& lhs, array_view<T2> const& rhs)
 {
     return rhs != lhs;
 }
 
 template<class T1, size_t N, class T2>
-inline
-constexpr bool operator==(boost::array<T1, N> const& lhs, array_view<T2> const& rhs)
+inline constexpr
+bool operator==(boost::array<T1, N> const& lhs, array_view<T2> const& rhs)
 {
     return rhs == lhs;
 }
 
 template<class T1, size_t N, class T2>
-inline
-constexpr bool operator!=(boost::array<T1, N> const& lhs, array_view<T2> const& rhs)
+inline constexpr
+bool operator!=(boost::array<T1, N> const& lhs, array_view<T2> const& rhs)
 {
     return rhs != lhs;
 }
 
 template<class T1, class T2>
-inline
-constexpr bool operator==(std::vector<T1> const& lhs, array_view<T2> const& rhs)
+inline constexpr
+bool operator==(std::vector<T1> const& lhs, array_view<T2> const& rhs)
 {
     return rhs == lhs;
 }
 
 template<class T1, class T2>
-inline
-constexpr bool operator!=(std::vector<T1> const& lhs, array_view<T2> const& rhs)
+inline constexpr
+bool operator!=(std::vector<T1> const& lhs, array_view<T2> const& rhs)
 {
     return rhs != lhs;
 }
 
 template<class T1, size_t N, class T2>
-inline
-constexpr bool operator==(T1 const(& lhs)[N], array_view<T2> const& rhs)
+inline constexpr
+bool operator==(T1 const(& lhs)[N], array_view<T2> const& rhs)
 {
     return rhs == lhs;
 }
 
 template<class T1, size_t N, class T2>
-inline
-constexpr bool operator!=(T1 const(& lhs)[N], array_view<T2> const& rhs)
+inline constexpr
+bool operator!=(T1 const(& lhs)[N], array_view<T2> const& rhs)
 {
     return rhs != lhs;
 }
