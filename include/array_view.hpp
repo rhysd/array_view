@@ -49,24 +49,24 @@ public:
     // Note:
     // This constructor can't be constexpr because & operator can't be constexpr.
     template<class U, size_type N>
-    array_view(std::array<U, N> const& a) noexcept
+    /*implicit*/ array_view(std::array<U, N> const& a) noexcept
         : length_(N), data_(N > 0 ? a.data() : nullptr)
     {}
 
     // Note:
     // This constructor can't be constexpr because & operator can't be constexpr.
     template<class U, size_type N>
-    array_view(U const (& a)[N]) noexcept
+    /*implicit*/ array_view(U const (& a)[N]) noexcept
         : length_(N), data_(N > 0 ? std::addressof(a[0]) : nullptr)
     {}
 
     template<class U, size_type N>
-    array_view(boost::array<U, N> const& a) noexcept
+    /*implicit*/ array_view(boost::array<U, N> const& a) noexcept
         : length_(N), data_(a.data())
     {}
 
     template<class U>
-    array_view(std::vector<U> const& v) noexcept
+    /*implicit*/ array_view(std::vector<U> const& v) noexcept
         : length_(v.size()), data_(v.empty() ? nullptr : v.data())
     {}
 
