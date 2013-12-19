@@ -159,29 +159,32 @@ private:
 // }}}
 
 namespace detail { // {{{
-    // It's never defined, just an enabler.
-    extern void * enabler;
 
     template<class Array>
-    struct is_array {
+    struct is_array_class {
         static bool const value = false;
     };
     template<class T, size_t N>
-    struct is_array<std::array<T, N>>{
+    struct is_array_class<std::array<T, N>> {
         static bool const value = true;
     };
     template<class T, size_t N>
-    struct is_array<boost::array<T, N>>{
-        static bool const value = true;
-    };
-    template<class T, size_t N>
-    struct is_array<T (&)[N]>{
+    struct is_array_class<boost::array<T, N>> {
         static bool const value = true;
     };
     template<class T>
-    struct is_array<std::vector<T>>{
+    struct is_array_class<std::vector<T>> {
         static bool const value = true;
     };
+
+    template< class Array >
+    struct is_array : is_array_class<Array>
+    {};
+    template< class T, size_t N>
+    struct is_array<T [N]> {
+        static bool const value = true;
+    };
+
 } // namespace detail
 // }}}
 
