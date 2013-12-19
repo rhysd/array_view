@@ -4,6 +4,7 @@
 #include "../include/array_view.hpp"
 
 using arv::array_view;
+using arv::make_view;
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
