@@ -3,7 +3,7 @@
 
 BOOST_AUTO_TEST_SUITE(array_view_test)
 
-struct ctor_fixture {
+struct fixture_1_2_3 {
     template<class T>
     bool is_1_2_3(array_view<T> av)
     {
@@ -11,7 +11,7 @@ struct ctor_fixture {
     }
 };
 
-BOOST_FIXTURE_TEST_CASE(constructors, ctor_fixture) {
+BOOST_FIXTURE_TEST_CASE(constructors, fixture_1_2_3) {
     constexpr int a[] = {1, 2, 3};
     constexpr std::array<int, 3> ar = {{1, 2, 3}};
     std::vector<int> v = {1, 2, 3};
