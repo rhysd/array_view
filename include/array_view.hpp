@@ -137,9 +137,9 @@ namespace detail {
 template<class T>
 class array_view {
 public:
-    //
-    // types
-    //
+    /*
+     * types
+     */
     typedef T value_type;
     typedef value_type const* pointer;
     typedef value_type const* const_pointer;
@@ -152,9 +152,9 @@ public:
     typedef std::reverse_iterator<iterator> reverse_iterator;
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-    //
-    // ctors and assign operators
-    //
+    /*
+     * ctors and assign operators
+     */
     constexpr array_view() noexcept
         : length_(0), data_(nullptr)
     {}
@@ -197,9 +197,9 @@ public:
 
     array_view& operator=(array_view const&) noexcept = default;
 
-    //
-    // iterator interfaces
-    //
+    /*
+     * iterator interfaces
+     */
     constexpr const_iterator begin() const noexcept
     {
         return data_;
@@ -233,9 +233,9 @@ public:
         return rend();
     }
 
-    //
-    // access
-    //
+    /*
+     * access
+     */
     constexpr size_type size() const noexcept
     {
         return length_;
@@ -274,7 +274,9 @@ public:
         return *(data_ + length_ - 1);
     }
 
-    // slices
+    /*
+     * slices
+     */
     // array_view<T> slice(size_type const start_pos, size_type const end_pos) const
     // array_view<T> slice_before(size_type const pos) const
     // array_view<T> slice_after(size_type const pos) const
@@ -282,9 +284,9 @@ public:
     // array_view<T> slice_before(iterator const pos) const
     // array_view<T> slice_after(iterator const pos) const
 
-    //
-    // others
-    //
+    /*
+     * others
+     */
     template<class Allocator = std::allocator<T>>
     auto to_vector(Allocator const& alloc = Allocator{}) const
         -> std::vector<T, Allocator>
@@ -312,7 +314,7 @@ private:
 };
 // }}}
 
-// compare {{{
+// compare operators {{{
 namespace detail {
     template< class ArrayL, class ArrayR >
     inline constexpr
