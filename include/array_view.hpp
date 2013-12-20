@@ -160,6 +160,13 @@ public:
         return *(data_ + length_ - 1);
     }
 
+    // slices
+    // array_view<T> slice(size_type const start_pos, size_type const end_pos) const
+    // array_view<T> slice_before(size_type const pos) const
+    // array_view<T> slice_after(size_type const pos) const
+    // array_view<T> slice(iterator start, iterator last) const
+    // array_view<T> slice_before(iterator const pos) const
+    // array_view<T> slice_after(iterator const pos) const
 
     //
     // others
