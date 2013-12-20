@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <memory>
 #include <type_traits>
+#include <vector>
 
 namespace boost {
 template<class T, std::size_t N>
@@ -138,7 +139,7 @@ public:
     }
     constexpr const_reference at(size_type const n) const
     {
-        if (n >= length_) throw std::out_of_range("array_view::at");
+        if (n >= length_) throw std::out_of_range("array_view::at()");
         return *(data_ + n);
     }
     constexpr const_pointer data() const noexcept
@@ -152,6 +153,17 @@ public:
     constexpr const_reference back() const noexcept
     {
         return *(data_ + length_ - 1);
+    }
+
+
+    //
+    // others
+    //
+    template<class Allocator = std::allocator<T>>
+    auto to_vector(Allocator const& alloc = Allocator{}) const
+        -> std::vector<T, Allocator>
+    {
+        return {begin(), end(), alloc};
     }
 
 private:
