@@ -19,6 +19,120 @@ namespace arv {
 
 using std::size_t;
 
+namespace detail {
+    // helper meta functions {{{
+    template<class Array>
+    struct is_array_class {
+        static bool const value = false;
+    };
+    template<class T, size_t N>
+    struct is_array_class<std::array<T, N>> {
+        static bool const value = true;
+    };
+    template<class T, size_t N>
+    struct is_array_class<boost::array<T, N>> {
+        static bool const value = true;
+    };
+    template<class T>
+    struct is_array_class<std::vector<T>> {
+        static bool const value = true;
+    };
+
+    template< class Array >
+    struct is_array : is_array_class<Array>
+    {};
+    template< class T, size_t N>
+    struct is_array<T [N]> {
+        static bool const value = true;
+    };
+    // }}}
+
+    // index sequences {{{
+    template< size_t... Indices >
+    struct indices{
+        static constexpr size_t value[sizeof...(Indices)] = {Indices...};
+    };
+
+    template<class IndicesType, size_t Next>
+    struct make_indices_next;
+
+    template<size_t... Indices, size_t Next>
+    struct make_indices_next<indices<Indices...>, Next> {
+        typedef indices<Indices..., (Indices + Next)...> type;
+    };
+
+    template<class IndicesType, size_t Next, size_t Tail>
+    struct make_indices_next2;
+
+    template<size_t... Indices, size_t Next, size_t Tail>
+    struct make_indices_next2<indices<Indices...>, Next, Tail> {
+        typedef indices<Indices..., (Indices + Next)..., Tail> type;
+    };
+
+    template<size_t First, size_t Step, size_t N, class = void>
+    struct make_indices_impl;
+
+    template<size_t First, size_t Step, size_t N>
+    struct make_indices_impl<
+        First,
+        Step,
+        N,
+        typename std::enable_if<(N == 0)>::type
+    > {
+        typedef indices<> type;
+    };
+
+    template<size_t First, size_t Step, size_t N>
+    struct make_indices_impl<
+        First,
+        Step,
+        N,
+        typename std::enable_if<(N == 1)>::type
+    > {
+        typedef indices<First> type;
+    };
+
+    template<size_t First, size_t Step, size_t N>
+    struct make_indices_impl<
+        First,
+        Step,
+        N,
+        typename std::enable_if<(N > 1 && N % 2 == 0)>::type
+    >
+        : detail::make_indices_next<
+            typename detail::make_indices_impl<First, Step, N / 2>::type,
+            First + N / 2 * Step
+        >
+    {};
+
+    template<size_t First, size_t Step, size_t N>
+    struct make_indices_impl<
+        First,
+        Step,
+        N,
+        typename std::enable_if<(N > 1 && N % 2 == 1)>::type
+    >
+        : detail::make_indices_next2<
+            typename detail::make_indices_impl<First, Step, N / 2>::type,
+            First + N / 2 * Step,
+            First + (N - 1) * Step
+        >
+    {};
+
+    template<size_t First, size_t Last, size_t Step = 1>
+    struct make_indices_
+        : detail::make_indices_impl<
+            First,
+            Step,
+            ((Last - First) + (Step - 1)) / Step
+        >
+    {};
+
+    template < size_t Start, size_t Last, size_t Step = 1 >
+    using make_indices = typename make_indices_< Start, Last, Step >::type;
+    // }}}
+} // namespace detail
+
 // array_view {{{
 template<class T>
 class array_view {
@@ -178,40 +292,24 @@ public:
         return {begin(), end(), alloc};
     }
 
+    template<size_t N>
+    auto to_array() const
+        -> std::array<T, N>
+    {
+        return to_array_impl(detail::make_indices<0, N>{});
+    }
+private:
+    template<size_t... I>
+    auto to_array_impl(detail::indices<I...>) const
+        -> std::array<T, sizeof...(I)>
+    {
+        return {{(I < length_ ? *(data_ + I) : T{} )...}};
+    }
+
 private:
     size_type const length_;
     const_pointer const data_;
 };
-// }}}
-
-namespace detail { // {{{
-
-    template<class Array>
-    struct is_array_class {
-        static bool const value = false;
-    };
-    template<class T, size_t N>
-    struct is_array_class<std::array<T, N>> {
-        static bool const value = true;
-    };
-    template<class T, size_t N>
-    struct is_array_class<boost::array<T, N>> {
-        static bool const value = true;
-    };
-    template<class T>
-    struct is_array_class<std::vector<T>> {
-        static bool const value = true;
-    };
-
-    template< class Array >
-    struct is_array : is_array_class<Array>
-    {};
-    template< class T, size_t N>
-    struct is_array<T [N]> {
-        static bool const value = true;
-    };
-
-} // namespace detail
 // }}}
 
 // compare {{{
