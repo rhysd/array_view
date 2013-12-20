@@ -76,6 +76,11 @@ public:
         : length_(n), data_(a)
     {}
 
+    template<class InputIterator>
+    explicit array_view(InputIterator start, InputIterator last)
+        : length_(std::distance(start, last)), data_(start)
+    {}
+
     array_view& operator=(array_view const&) noexcept = default;
 
     //
