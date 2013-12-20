@@ -134,6 +134,10 @@ namespace detail {
 } // namespace detail
 
 // array_view {{{
+
+struct check_bound_t {};
+static constexpr check_bound_t check_bound{};
+
 template<class T>
 class array_view {
 public:
@@ -277,12 +281,81 @@ public:
     /*
      * slices
      */
-    // array_view<T> slice(size_type const start_pos, size_type const end_pos) const
-    // array_view<T> slice_before(size_type const pos) const
-    // array_view<T> slice_after(size_type const pos) const
-    // array_view<T> slice(iterator start, iterator last) const
-    // array_view<T> slice_before(iterator const pos) const
-    // array_view<T> slice_after(iterator const pos) const
+    // slice with indices {{{
+    // check bound {{{
+    constexpr array_view<T> slice(check_bound_t, size_type const pos, size_type const length) const
+    {
+        return pos >= length_
+            ? array_view<T>{}
+            : array_view<T>{begin() + pos, begin() + (pos + length < length_ ? pos + length : length_ - 1)};
+    }
+    constexpr array_view<T> slice_before(check_bound_t, size_type const pos) const
+    {
+        return {begin(), pos < length_ ? begin() + pos : end()};
+    }
+    constexpr array_view<T> slice_after(check_bound_t, size_type const pos) const
+    {
+        return pos >= length_
+            ? array_view<T>{}
+            : array_view<T>{begin(), begin() + pos};
+    }
+    // }}}
+    // not check bound {{{
+    constexpr array_view<T> slice(size_type const pos, size_type const length) const
+    {
+        return {begin() + pos, begin() + pos + length};
+    }
+    constexpr array_view<T> slice_before(size_type const pos) const
+    {
+        return {begin(), begin() + pos};
+    }
+    constexpr array_view<T> slice_after(size_type const pos) const
+    {
+        return {begin() + pos, end()};
+    }
+    // }}}
+    // }}}
+    // slice with iterators {{{
+    // check bound {{{
+    constexpr array_view<T> slice(check_bound_t, iterator start, iterator last) const
+    {
+        if ( start >= end() ||
+             start > last ||
+             std::distance(start, last > end() ? end() : last) > length_ - std::distance(begin(), start) ) {
+            return {};
+        }
+        return {start, last > end() ? end() : last};
+    }
+    constexpr array_view<T> slice_before(check_bound_t, iterator const pos) const
+    {
+        if (pos < begin()) {
+            return {};
+        }
+        return {begin(), pos > end() ? end() : pos};
+    }
+    constexpr array_view<T> slice_after(check_bound_t, iterator const pos) const
+    {
+        if (pos > end()) {
+            return {};
+        }
+        return {pos < begin() ? begin() : pos, end()};
+    }
+    // }}}
+    // not check bound {{{
+    constexpr array_view<T> slice(iterator start, iterator last) const
+    {
+        return {start, last};
+    }
+    constexpr array_view<T> slice_before(iterator const pos) const
+    {
+        return {begin(), pos};
+    }
+    constexpr array_view<T> slice_after(iterator const pos) const
+    {
+        return {pos, end()};
+    }
+    // }}}
+    // }}}
 
     /*
      * others
