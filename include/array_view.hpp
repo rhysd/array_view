@@ -305,7 +305,7 @@ template<class T>
 inline
 constexpr array_view<T> make_view(T const* p, typename array_view<T>::size_type const n)
 {
-    return {p, n};
+    return array_view<T>{p, n};
 }
 
 // }}}
