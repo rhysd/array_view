@@ -44,4 +44,36 @@ BOOST_FIXTURE_TEST_CASE(functions_arguments, fixture_1_2_3) {
     BOOST_CHECK(is_1_2_3(make_view(&a[0], sizeof(a)/sizeof(a[0]))));
 }
 
+BOOST_AUTO_TEST_CASE(explicit_conversion) {
+    constexpr int a[] = {1, 2, 3};
+    auto av = make_view(a);
+    std::array<int, 3> ar = {{1, 2, 3}};
+    BOOST_CHECK(std::vector<int>({1, 2, 3}) == av.to_vector());
+    BOOST_CHECK(ar == av.to_array<3>());
+}
+
+BOOST_AUTO_TEST_CASE(compare_operators) {
+    constexpr int a[] = {1, 2, 3};
+    constexpr int a2[] = {1, 1, 2, 3, 5};
+    constexpr std::array<int, 3> ar = {{1, 2, 3}};
+    std::vector<int> v = {1, 2, 3};
+    auto av = make_view(a);
+    auto av2 = make_view(a2);
+
+    BOOST_CHECK(av == av);
+    BOOST_CHECK(av != a2);
+    BOOST_CHECK(av == a);
+    BOOST_CHECK(av2 != a);
+    BOOST_CHECK(av == ar);
+    BOOST_CHECK(av2 != ar);
+    BOOST_CHECK(av == v);
+    BOOST_CHECK(av2 != v);
+    BOOST_CHECK(a == av);
+    BOOST_CHECK(a != av2);
+    BOOST_CHECK(ar == av);
+    BOOST_CHECK(ar != av2);
+    BOOST_CHECK(v == av);
+    BOOST_CHECK(v != av2);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
