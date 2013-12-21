@@ -1,5 +1,7 @@
 #define BOOST_TEST_MODULE ArrayViewTest
 
+#include <sstream>
+
 #include "../include/array_view.hpp"
 #include "../include/array_view_output.hpp"
 
@@ -113,6 +115,16 @@ BOOST_AUTO_TEST_CASE(compare_operators) {
     BOOST_CHECK(v != av2);
     BOOST_CHECK(il == av);
     BOOST_CHECK(il != av2);
+}
+
+BOOST_AUTO_TEST_CASE(array_view_output) {
+    std::stringstream ss;
+    ss << make_view({1, 2, 3});
+    BOOST_CHECK(ss.str() == "{1, 2, 3}");
+    ss << array_view<int>{};
+    BOOST_CHECK(ss.str() == "{1, 2, 3}{}");
+    ss << make_view({"aaa", "bbb", "ccc"});
+    BOOST_CHECK(ss.str() == "{1, 2, 3}{}{aaa, bbb, ccc}");
 }
 
 BOOST_AUTO_TEST_CASE(non_safe_slice) {
