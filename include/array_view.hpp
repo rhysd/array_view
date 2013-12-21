@@ -196,7 +196,7 @@ public:
         : length_(v.size()), data_(v.empty() ? nullptr : v.data())
     {}
 
-    explicit constexpr array_view(T const* a, size_type const n) noexcept
+    /*implicit*/ constexpr array_view(T const* a, size_type const n) noexcept
         : length_(n), data_(a)
     {}
 
