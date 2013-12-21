@@ -1,6 +1,7 @@
 #define BOOST_TEST_MODULE ArrayViewTest
 
 #include "../include/array_view.hpp"
+#include "../include/array_view_output.hpp"
 
 using arv::array_view;
 using arv::make_view;
@@ -68,7 +69,6 @@ BOOST_AUTO_TEST_CASE(check_make_view) {
     BOOST_CHECK(av == make_view(ar.begin(), ar.end()));
 }
 
-
 BOOST_FIXTURE_TEST_CASE(functions_arguments, fixture_1_2_3) {
     constexpr int a[] = {1, 2, 3};
     constexpr std::array<int, 3> ar = {{1, 2, 3}};
@@ -113,6 +113,20 @@ BOOST_AUTO_TEST_CASE(compare_operators) {
     BOOST_CHECK(v != av2);
     BOOST_CHECK(il == av);
     BOOST_CHECK(il != av2);
+}
+
+BOOST_AUTO_TEST_CASE(non_safe_slice) {
+    auto il = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    array_view<int> av = il;
+
+    // Note: Work around for BOOST_CHECK.
+    // It seems that {a, b} is not available in BOOST_CHECK().
+    BOOST_CHECK(av.slice(2, 5) == make_view({3, 4, 5, 6, 7}));
+    BOOST_CHECK(av.slice_before(5) == make_view({1, 2, 3, 4, 5}));
+    BOOST_CHECK(av.slice_after(5) == make_view({6, 7, 8, 9}));
+    BOOST_CHECK(av.slice(av.begin()+2, av.begin()+7) == make_view({3, 4, 5, 6, 7}));
+    BOOST_CHECK(av.slice_before(av.begin()+5) == make_view({1, 2, 3, 4, 5}));
+    BOOST_CHECK(av.slice_after(av.begin()+5) == make_view({6, 7, 8, 9}));
 }
 
 BOOST_AUTO_TEST_SUITE_END()
