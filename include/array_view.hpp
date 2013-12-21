@@ -524,12 +524,11 @@ array_view<T> make_view(T const* p, typename array_view<T>::size_type const n)
     return array_view<T>{p, n};
 }
 
-template<class InputIterator>
+template<class InputIterator, class Result = array_view<typename std::iterator_traits<InputIterator>::value_type>>
 inline constexpr
-auto make_view(InputIterator begin, InputIterator end)
-    -> array_view<typename std::iterator_traits<InputIterator>::value_type>
+Result make_view(InputIterator begin, InputIterator end)
 {
-    return {begin, end};
+    return Result{begin, end};
 }
 
 template<class T>
