@@ -192,7 +192,15 @@ public:
         : length_(n), data_(a)
     {}
 
-    template<class InputIterator>
+    template<
+        class InputIterator,
+        class = typename std::enable_if<
+            std::is_same<
+                T,
+                typename std::iterator_traits<InputIterator>::value_type
+            >::value
+        >::type
+    >
     explicit array_view(InputIterator start, InputIterator last)
         : length_(std::distance(start, last)), data_(start)
     {}
