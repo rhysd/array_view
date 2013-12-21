@@ -54,6 +54,21 @@ BOOST_FIXTURE_TEST_CASE(constructors, fixture_1_2_3) {
     BOOST_CHECK(av12.empty());
 }
 
+BOOST_AUTO_TEST_CASE(check_make_view) {
+    constexpr int a[] = {1, 2, 3};
+    constexpr std::array<int, 3> ar = {{1, 2, 3}};
+    std::vector<int> v = {1, 2, 3};
+    auto il = {1, 2, 3};
+    array_view<int> av = il;
+    BOOST_CHECK(av == make_view(a));
+    BOOST_CHECK(av == make_view(ar));
+    BOOST_CHECK(av == make_view(v));
+    BOOST_CHECK(av == make_view(il));
+    BOOST_CHECK(av == make_view(&a[0], 3));
+    BOOST_CHECK(av == make_view(ar.begin(), ar.end()));
+}
+
+
 BOOST_FIXTURE_TEST_CASE(functions_arguments, fixture_1_2_3) {
     constexpr int a[] = {1, 2, 3};
     constexpr std::array<int, 3> ar = {{1, 2, 3}};
