@@ -1,9 +1,8 @@
-Reference to Array for C++
+Wrapper for Reference to Array
 ==========================
 [![Build Status](https://travis-ci.org/rhysd/array_view.png?branch=master)](https://travis-ci.org/rhysd/array_view)
 
-
-References to array are very common in C++ programs.  In good old C programs, references to array are represented as a pointer and its length like `void f(int const* ptr, size_t len)`.  In C++, references to array are represented using template parameter like `template<size_t N> void f(int (&arr)[N])`.  And C++ has many useful array classes like `std::array`, `std::vector` and so on.  `array_view` can deal all of them with safe and unified way.
+References to array are very common in C++ programs.  In good old C programs, references to array are represented as a pointer and its length like `void f(int const* ptr, size_t const len)`.  In C++, references to array are represented using template parameter like `template<size_t N> void f(int (&arr)[N])`.  And C++ has many useful array classes like `std::array`, `std::vector` and so on.  `array_view` can deal all of them with safe and unified way.
 
 ```cpp
 #include <iostream>
@@ -11,10 +10,20 @@ References to array are very common in C++ programs.  In good old C programs, re
 
 void show_int_array(arv::array_view<int> view)
 {
-    for(auto const& e : view) {
-        std::cout << e << ' ';
+    std::cout << '{';
+    if (!view.empty()) {
+        auto itr = view.begin();
+        auto const end = view.end();
+        while (true) {
+            std::cout << *itr;
+            if (++itr != end) {
+                std::cout << ", ";
+            } else {
+                break;
+            }
+        }
     }
-    std::cout << std::endl;
+    std::cout << "}\n";
 }
 
 int main()
@@ -28,6 +37,7 @@ int main()
     show_int_array(array);
     show_int_array(vector);
     show_int_array({1, 2, 3, 4});
+    show_int_array({&good_old_c_array[0], 4});
 
     return 0;
 }
