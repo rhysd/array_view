@@ -397,9 +397,9 @@ namespace detail {
             return false;
         }
 
-        for (auto litr = std::begin(lhs), ritr = std::begin(rhs);
-            litr != std::end(lhs);
-            ++litr, ++ritr) {
+        auto litr = std::begin(lhs);
+        auto ritr = std::begin(rhs);
+        for (; litr != std::end(lhs); ++litr, ++ritr) {
             if (!(*litr == *ritr)) {
                 return false;
             }
