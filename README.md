@@ -50,13 +50,21 @@ std::vector<int> v = {1, 2, 3};
 auto av = arv::make_view(v);
 ```
 
+If you want to output `array_view`, include `array_view_output.hpp` and just use `<<`.
+
+```cpp
+#include "array_view_output.hpp"
+std::vector<int> v = {1, 2, 3, 4, 5};
+std::cout << arv::make_view(v); // "{1, 2, 3, 4, 5}" is output
+```
+
 You can slice `array_view` to make new sub-array references.
 
 ```cpp
 std::vector<int> v = {1, 2, 3, 4, 5};
 auto av = arv::make_view(v);
 auto sub_av = av.slice(/*position*/ 2, /*length*/ 2);
-for(auto i : sub_av) std::cout << i; // 34
+std::cout << sub_av; // {3, 4}
 ```
 
 ## Why you don't use `boost::range`?
