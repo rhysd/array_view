@@ -65,6 +65,8 @@ std::vector<int> v = {1, 2, 3, 4, 5};
 auto av = arv::make_view(v);
 auto sub_av = av.slice(/*position*/ 2, /*length*/ 2);
 std::cout << sub_av; // {3, 4}
+auto sub_av2 = av.slice(arv::check_bound, /*position*/ 2, /*length*/ 2); // check boundary and may throw an exception
+std::cout << sub_av2; // {3, 4}
 ```
 
 ## Why don't you use `boost::range`?
