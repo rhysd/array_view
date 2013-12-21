@@ -164,6 +164,7 @@ public:
     {}
 
     constexpr array_view(array_view const&) noexcept = default;
+    constexpr array_view(array_view &&) noexcept = default;
 
     // Note:
     // This constructor can't be constexpr because & operator can't be constexpr.
@@ -206,6 +207,7 @@ public:
     {}
 
     array_view& operator=(array_view const&) noexcept = default;
+    array_view& operator=(array_view &&) noexcept = default;
 
     /*
      * iterator interfaces
