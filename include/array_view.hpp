@@ -38,6 +38,10 @@ namespace detail {
     struct is_array_class<std::vector<T>> {
         static bool const value = true;
     };
+    template<class T>
+    struct is_array_class<std::initializer_list<T>> {
+        static bool const value = true;
+    };
 
     template< class Array >
     struct is_array : is_array_class<Array>
@@ -520,6 +524,20 @@ array_view<T> make_view(T const* p, typename array_view<T>::size_type const n)
     return array_view<T>{p, n};
 }
 
+template<class InputIterator>
+inline constexpr
+auto make_view(InputIterator begin, InputIterator end)
+    -> array_view<typename std::iterator_traits<InputIterator>::value_type>
+{
+    return {begin, end};
+}
+
+template<class T>
+inline constexpr
+array_view<T> make_view(std::initializer_list<T> const& l)
+{
+    return {l};
+}
 // }}}
 
 } // namespace arv
