@@ -9,6 +9,7 @@
 #include <memory>
 #include <type_traits>
 #include <vector>
+#include <initializer_list>
 
 namespace boost {
 template<class T, std::size_t N>
@@ -206,6 +207,10 @@ public:
     >
     explicit array_view(InputIterator start, InputIterator last)
         : length_(std::distance(start, last)), data_(start)
+    {}
+
+    array_view(std::initializer_list<T> const& l)
+        : length_(l.size()), data_(std::begin(l))
     {}
 
     array_view& operator=(array_view const&) noexcept = default;

@@ -30,11 +30,13 @@ BOOST_FIXTURE_TEST_CASE(constructors, fixture_1_2_3) {
     array_view<int> av4{&a[0], sizeof(a)/sizeof(a[0])};
     array_view<int> av5;
     array_view<int> av6(std::begin(a), std::end(a));
+    array_view<int> av11({1, 2, 3});
     BOOST_CHECK(is_1_2_3(av1));
     BOOST_CHECK(is_1_2_3(av2));
     BOOST_CHECK(is_1_2_3(av3));
     BOOST_CHECK(is_1_2_3(av4));
     BOOST_CHECK(is_1_2_3(av6));
+    BOOST_CHECK(is_1_2_3(av11));
 
     // zero size
     constexpr std::array<int, 0> ar2 = {};
@@ -44,10 +46,12 @@ BOOST_FIXTURE_TEST_CASE(constructors, fixture_1_2_3) {
     array_view<int> av8 = ar2;
     array_view<int> av9 = v2;
     array_view<int> av10(std::begin(ar2), std::end(ar2));
+    array_view<int> av12 = {};
     BOOST_CHECK(av7.empty());
     BOOST_CHECK(av8.empty());
     BOOST_CHECK(av9.empty());
     BOOST_CHECK(av10.empty());
+    BOOST_CHECK(av12.empty());
 }
 
 BOOST_FIXTURE_TEST_CASE(functions_arguments, fixture_1_2_3) {
