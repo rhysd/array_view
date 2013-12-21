@@ -310,7 +310,7 @@ public:
     }
     constexpr array_view<T> slice_before(check_bound_t, size_type const pos) const
     {
-        return {begin(), pos < length_ ? begin() + pos : end()};
+        return array_view<T>{begin(), pos < length_ ? begin() + pos : end()};
     }
     constexpr array_view<T> slice_after(check_bound_t, size_type const pos) const
     {
@@ -322,15 +322,15 @@ public:
     // not check bound {{{
     constexpr array_view<T> slice(size_type const pos, size_type const length) const
     {
-        return {begin() + pos, begin() + pos + length};
+        return array_view<T>{begin() + pos, begin() + pos + length};
     }
     constexpr array_view<T> slice_before(size_type const pos) const
     {
-        return {begin(), begin() + pos};
+        return array_view<T>{begin(), begin() + pos};
     }
     constexpr array_view<T> slice_after(size_type const pos) const
     {
-        return {begin() + pos, end()};
+        return array_view<T>{begin() + pos, end()};
     }
     // }}}
     // }}}
@@ -343,35 +343,35 @@ public:
              std::distance(start, last > end() ? end() : last) > length_ - std::distance(begin(), start) ) {
             return {};
         }
-        return {start, last > end() ? end() : last};
+        return array_view<T>{start, last > end() ? end() : last};
     }
     constexpr array_view<T> slice_before(check_bound_t, iterator const pos) const
     {
         if (pos < begin()) {
             return {};
         }
-        return {begin(), pos > end() ? end() : pos};
+        return array_view<T>{begin(), pos > end() ? end() : pos};
     }
     constexpr array_view<T> slice_after(check_bound_t, iterator const pos) const
     {
         if (pos > end()) {
             return {};
         }
-        return {pos < begin() ? begin() : pos, end()};
+        return array_view<T>{pos < begin() ? begin() : pos, end()};
     }
     // }}}
     // not check bound {{{
     constexpr array_view<T> slice(iterator start, iterator last) const
     {
-        return {start, last};
+        return array_view<T>{start, last};
     }
     constexpr array_view<T> slice_before(iterator const pos) const
     {
-        return {begin(), pos};
+        return array_view<T>{begin(), pos};
     }
     constexpr array_view<T> slice_after(iterator const pos) const
     {
-        return {pos, end()};
+        return array_view<T>{pos, end()};
     }
     // }}}
     // }}}
