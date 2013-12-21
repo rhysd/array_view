@@ -178,7 +178,9 @@ public:
     template<size_type N>
     /*implicit*/ array_view(T const (& a)[N]) noexcept
         : length_(N), data_(N > 0 ? std::addressof(a[0]) : nullptr)
-    {}
+    {
+        static_assert(N > 0, "Zero-length array is not permitted in ISO C++.");
+    }
 
     template<size_type N>
     /*implicit*/ array_view(boost::array<T, N> const& a) noexcept
