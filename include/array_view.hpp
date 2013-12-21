@@ -304,19 +304,24 @@ public:
     // check bound {{{
     constexpr array_view<T> slice(check_bound_t, size_type const pos, size_type const length) const
     {
-        return pos >= length_
-            ? array_view<T>{}
-            : array_view<T>{begin() + pos, begin() + (pos + length < length_ ? pos + length : length_ - 1)};
+        if (pos >= length_ || pos + length >= length_) {
+            throw std::out_of_range("array_view::slice()");
+        }
+        return array_view<T>{begin() + pos, begin() + pos + length};
     }
     constexpr array_view<T> slice_before(check_bound_t, size_type const pos) const
     {
-        return array_view<T>{begin(), pos < length_ ? begin() + pos : end()};
+        if (pos >= length_) {
+            throw std::out_of_range("array_view::slice()");
+        }
+        return array_view<T>{begin(), begin() + pos};
     }
     constexpr array_view<T> slice_after(check_bound_t, size_type const pos) const
     {
-        return pos >= length_
-            ? array_view<T>{}
-            : array_view<T>{begin(), begin() + pos};
+        if (pos >= length_) {
+            throw std::out_of_range("array_view::slice()");
+        }
+        return array_view<T>{begin(), begin() + pos};
     }
     // }}}
     // not check bound {{{
