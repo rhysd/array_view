@@ -30,7 +30,7 @@ def compile file
     result = `#{compiler} #{options} #{file} -o #{out} -l boost_unit_test_framework && ./#{out}`
     status = $?.success?
     `if [ -f '#{out}' ]; then rm #{out}; fi`
-    puts "compiling #{"#{File.basename(File.dirname file)}/#{File.basename file}"} with #{compiler}...#{result}"
+    puts "compiling #{"#{File.basename(File.dirname file)}/#{File.basename file}"} with #{compiler}...\n#{result}"
     status
   end.inject{|a,i| a && i}
 end
