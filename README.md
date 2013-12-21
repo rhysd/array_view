@@ -48,7 +48,7 @@ int main()
 Copy files in `include/` to a directory in include paths.
 
 ```
-cp include/* path/to/include-dir/
+$ cp include/* path/to/include-dir/
 ```
 
 ## More Usage
