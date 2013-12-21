@@ -67,7 +67,7 @@ auto sub_av = av.slice(/*position*/ 2, /*length*/ 2);
 std::cout << sub_av; // {3, 4}
 ```
 
-## Why you don't use `boost::range`?
+## Why don't you use `boost::range`?
 
 I use this library in my job.  Just try to feel what I feel.
 
