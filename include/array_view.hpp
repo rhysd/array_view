@@ -217,8 +217,8 @@ public:
         : length_(l.size()), data_(std::begin(l))
     {}
 
-    array_view& operator=(array_view const&) noexcept = default;
-    array_view& operator=(array_view &&) noexcept = default;
+    array_view& operator=(array_view const&) noexcept = delete;
+    array_view& operator=(array_view &&) noexcept = delete;
 
     /*
      * iterator interfaces
