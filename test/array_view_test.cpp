@@ -79,6 +79,7 @@ BOOST_AUTO_TEST_CASE(compare_operators) {
     std::vector<int> v = {1, 2, 3};
     auto av = make_view(a);
     auto av2 = make_view(a2);
+    auto il = {1, 2, 3};
     BOOST_CHECK(av == av);
     BOOST_CHECK(av != a2);
     BOOST_CHECK(av == a);
@@ -87,12 +88,16 @@ BOOST_AUTO_TEST_CASE(compare_operators) {
     BOOST_CHECK(av2 != ar);
     BOOST_CHECK(av == v);
     BOOST_CHECK(av2 != v);
+    BOOST_CHECK(av == il);
+    BOOST_CHECK(av2 != il);
     BOOST_CHECK(a == av);
     BOOST_CHECK(a != av2);
     BOOST_CHECK(ar == av);
     BOOST_CHECK(ar != av2);
     BOOST_CHECK(v == av);
     BOOST_CHECK(v != av2);
+    BOOST_CHECK(il == av);
+    BOOST_CHECK(il != av2);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
