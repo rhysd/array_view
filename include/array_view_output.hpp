@@ -13,14 +13,16 @@ std::ostream &operator<<(std::ostream &ost, arv::array_view<T> const& av)
 {
     ost << '{';
 
-    auto itr = std::begin(av);
-    auto const end = std::end(av);
-    while(true) {
-        ost << *itr;
-        if(++itr != end) {
-            ost << ", ";
-        } else {
-            break;
+    if(! av.empty()) {
+        auto itr = std::begin(av);
+        auto const end = std::end(av);
+        while(true) {
+            ost << *itr;
+            if(++itr != end) {
+                ost << ", ";
+            } else {
+                break;
+            }
         }
     }
 
