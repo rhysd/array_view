@@ -346,6 +346,7 @@ public:
     constexpr array_view<T> slice(check_bound_t, iterator start, iterator last) const
     {
         if ( start >= end() ||
+             last > end() ||
              start > last ||
              static_cast<size_t>(std::distance(start, last > end() ? end() : last)) > length_ - std::distance(begin(), start) ) {
             throw std::out_of_range("array_view::slice()");
@@ -354,14 +355,14 @@ public:
     }
     constexpr array_view<T> slice_before(check_bound_t, iterator const pos) const
     {
-        if (pos < begin()) {
+        if (pos < begin() || pos > end()) {
             throw std::out_of_range("array_view::slice()");
         }
         return array_view<T>{begin(), pos > end() ? end() : pos};
     }
     constexpr array_view<T> slice_after(check_bound_t, iterator const pos) const
     {
-        if (pos > end()) {
+        if (pos < begin() || pos > end()) {
             throw std::out_of_range("array_view::slice()");
         }
         return array_view<T>{pos < begin() ? begin() : pos, end()};
