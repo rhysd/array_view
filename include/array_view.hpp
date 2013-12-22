@@ -348,21 +348,21 @@ public:
         if ( start >= end() ||
              start > last ||
              static_cast<size_t>(std::distance(start, last > end() ? end() : last)) > length_ - std::distance(begin(), start) ) {
-            return {};
+            throw std::out_of_range("array_view::slice()");
         }
         return array_view<T>{start, last > end() ? end() : last};
     }
     constexpr array_view<T> slice_before(check_bound_t, iterator const pos) const
     {
         if (pos < begin()) {
-            return {};
+            throw std::out_of_range("array_view::slice()");
         }
         return array_view<T>{begin(), pos > end() ? end() : pos};
     }
     constexpr array_view<T> slice_after(check_bound_t, iterator const pos) const
     {
         if (pos > end()) {
-            return {};
+            throw std::out_of_range("array_view::slice()");
         }
         return array_view<T>{pos < begin() ? begin() : pos, end()};
     }
