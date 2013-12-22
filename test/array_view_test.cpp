@@ -153,4 +153,35 @@ BOOST_AUTO_TEST_CASE(non_safe_slice) {
     BOOST_CHECK(av.slice_after(av.begin()+5) == make_view({6, 7, 8, 9}));
 }
 
+BOOST_AUTO_TEST_CASE(safe_slice) {
+    auto il = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    array_view<int> av = il;
+
+    using arv::check_bound;
+
+    // Note: Work around for BOOST_CHECK.
+    // It seems that {a, b} is not available in BOOST_CHECK().
+    BOOST_CHECK(av.slice(check_bound, 2, 5) == make_view({3, 4, 5, 6, 7}));
+    BOOST_CHECK(av.slice(check_bound, 2, 0).empty() );
+    BOOST_CHECK(av.slice_before(check_bound, 5) == make_view({1, 2, 3, 4, 5}));
+    BOOST_CHECK(av.slice_after(check_bound, 5) == make_view({6, 7, 8, 9}));
+    BOOST_CHECK(av.slice(check_bound, av.begin()+2, av.begin()+7) == make_view({3, 4, 5, 6, 7}));
+    BOOST_CHECK(av.slice(check_bound, av.begin()+2, av.begin()+2).empty() );
+    BOOST_CHECK(av.slice_before(check_bound, av.begin()+5) == make_view({1, 2, 3, 4, 5}));
+    BOOST_CHECK(av.slice_after(check_bound, av.begin()+5) == make_view({6, 7, 8, 9}));
+
+    // Throw an exception when boundary check fails
+    BOOST_CHECK_THROW(av.slice(check_bound, 10, 1), std::out_of_range);
+    BOOST_CHECK_THROW(av.slice(check_bound, 1, 10), std::out_of_range);
+    BOOST_CHECK_THROW(av.slice(check_bound, 10, 10), std::out_of_range);
+    BOOST_CHECK_THROW(av.slice_before(check_bound, 10), std::out_of_range);
+    BOOST_CHECK_THROW(av.slice_after(check_bound, 10), std::out_of_range);
+    BOOST_CHECK_THROW(av.slice(check_bound, av.begin() + 3, av.begin() + 1), std::out_of_range);
+    BOOST_CHECK_THROW(av.slice(check_bound, av.begin() + 10, av.begin() + 11), std::out_of_range);
+    BOOST_CHECK_THROW(av.slice(check_bound, av.begin(), av.begin() + 11), std::out_of_range);
+    BOOST_CHECK_THROW(av.slice(check_bound, av.begin() + 11, av.begin() + 11), std::out_of_range);
+    BOOST_CHECK_THROW(av.slice_before(check_bound, av.begin() + 11), std::out_of_range);
+    BOOST_CHECK_THROW(av.slice_after(check_bound, av.begin() + 11), std::out_of_range);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
