@@ -323,7 +323,7 @@ public:
         if (pos >= length_) {
             throw std::out_of_range("array_view::slice()");
         }
-        return array_view<T>{begin(), begin() + pos};
+        return array_view<T>{begin() + pos, end()};
     }
     // }}}
     // not check bound {{{
@@ -347,7 +347,7 @@ public:
     {
         if ( start >= end() ||
              start > last ||
-             std::distance(start, last > end() ? end() : last) > length_ - std::distance(begin(), start) ) {
+             static_cast<size_t>(std::distance(start, last > end() ? end() : last)) > length_ - std::distance(begin(), start) ) {
             return {};
         }
         return array_view<T>{start, last > end() ? end() : last};
