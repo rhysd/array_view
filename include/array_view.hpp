@@ -21,7 +21,7 @@ namespace arv {
 using std::size_t;
 
 namespace detail {
-    // helper meta functions {{{
+    // detail meta functions {{{
     template<class Array>
     struct is_array_class {
         static bool const value = false;
@@ -40,14 +40,6 @@ namespace detail {
     };
     template<class T>
     struct is_array_class<std::initializer_list<T>> {
-        static bool const value = true;
-    };
-
-    template< class Array >
-    struct is_array : is_array_class<Array>
-    {};
-    template< class T, size_t N>
-    struct is_array<T [N]> {
         static bool const value = true;
     };
     // }}}
@@ -137,6 +129,16 @@ namespace detail {
     using make_indices = typename make_indices_< Start, Last, Step >::type;
     // }}}
 } // namespace detail
+
+// helper meta functions {{{
+template< class Array >
+struct is_array : detail::is_array_class<Array>
+{};
+template< class T, size_t N>
+struct is_array<T [N]> {
+    static bool const value = true;
+};
+// }}}
 
 // array_view {{{
 
@@ -464,7 +466,7 @@ template<
     class T,
     class Array,
     class = typename std::enable_if<
-        detail::is_array<Array>::value
+        is_array<Array>::value
     >::type
 >
 inline constexpr
@@ -477,7 +479,7 @@ template<
     class Array,
     class T,
     class = typename std::enable_if<
-        detail::is_array<Array>::value
+        is_array<Array>::value
     >::type
 >
 inline constexpr
@@ -490,7 +492,7 @@ template<
     class Array,
     class T,
     class = typename std::enable_if<
-        detail::is_array<Array>::value,
+        is_array<Array>::value,
         Array
     >::type
 >
