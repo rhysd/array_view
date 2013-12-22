@@ -1,6 +1,7 @@
 #define BOOST_TEST_MODULE ArrayViewTest
 
 #include <sstream>
+#include <list>
 
 #include "../include/array_view.hpp"
 #include "../include/array_view_output.hpp"
@@ -125,6 +126,17 @@ BOOST_AUTO_TEST_CASE(array_view_output) {
     BOOST_CHECK(ss.str() == "{1, 2, 3}{}");
     ss << make_view({"aaa", "bbb", "ccc"});
     BOOST_CHECK(ss.str() == "{1, 2, 3}{}{aaa, bbb, ccc}");
+}
+
+BOOST_AUTO_TEST_CASE(is_array_meta_function) {
+    typedef std::array<int, 3> array_int_3;
+    BOOST_CHECK(arv::is_array<array_int_3>::value);
+    BOOST_CHECK(arv::is_array<std::vector<int>>::value);
+    BOOST_CHECK(arv::is_array<std::initializer_list<int>>::value);
+    BOOST_CHECK(arv::is_array<int [3]>::value);
+    BOOST_CHECK(!arv::is_array<int>::value);
+    BOOST_CHECK(!arv::is_array<int *>::value);
+    BOOST_CHECK(!arv::is_array<std::list<int>>::value);
 }
 
 BOOST_AUTO_TEST_CASE(non_safe_slice) {
