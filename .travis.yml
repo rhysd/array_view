@@ -1,11 +1,71 @@
+sudo: false
+dist: trusty
+
 language: cpp
+
+addons:
+  apt:
+    packages: &common_deps
+    - cmake
+    - libboost-test-dev
+    - libboost-dev
+    - valgrind
+
+matrix:
+  include:
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - *common_deps
+            - g++-4.8
+      env: CC_COMPILER=gcc-4.8 CXX_COMPILER=g++-4.8
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - *common_deps
+            - g++-5
+      env: CC_COMPILER=gcc-5 CXX_COMPILER=g++-5
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.5
+          packages:
+            - *common_deps
+            - clang-3.5
+      env: CC_COMPILER=clang-3.5 CXX_COMPILER=clang++-3.5
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.8
+          packages:
+            - *common_deps
+            - clang-3.8
+      env: CC_COMPILER=clang-3.8 CXX_COMPILER=clang++-3.8
+
+#before_install:
+#  - test -n $CC  && unset CC
+#  - test -n $CXX && unset CXX
+
+before_script:
+  - export CC=${CC_COMPILER}
+  - export CXX=${CXX_COMPILER}
+  - $CC --version
+  - $CXX --version
+  - cmake --version
+
 script:
-    - clang++ --version
-    - clang++ -std=c++1y -Wall -Wextra -pedantic test/array_view_test.cpp -l boost_unit_test_framework && ./a.out && rm a.out
-install:
-    - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
-    - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
-    - sudo add-apt-repository --yes 'deb http://llvm.org/apt/precise/ llvm-toolchain-precise main'
-    - sudo apt-get -qq update
-    - sudo apt-get -qq install clang-3.5
-    - sudo apt-get -qq install libboost1.48-all-dev
+  - mkdir ../real_build &&
+    cd ../real_build/ &&
+    cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo "${TRAVIS_BUILD_DIR}" &&
+    make tests &&
+    make test

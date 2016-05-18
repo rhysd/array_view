@@ -283,8 +283,9 @@ public:
     }
     constexpr const_reference at(size_type const n) const
     {
-        if (n >= length_) throw std::out_of_range("array_view::at()");
-        return *(data_ + n);
+        return (n >= length_)
+            ? throw std::out_of_range("array_view::at()")
+            : *(data_ + n);
     }
     constexpr const_pointer data() const noexcept
     {
@@ -306,24 +307,21 @@ public:
     // check bound {{{
     constexpr array_view<T> slice(check_bound_t, size_type const pos, size_type const length) const
     {
-        if (pos >= length_ || pos + length >= length_) {
-            throw std::out_of_range("array_view::slice()");
-        }
-        return array_view<T>{begin() + pos, begin() + pos + length};
+        return (pos >= length_ || pos + length >= length_)
+            ? throw std::out_of_range("array_view::slice()")
+            : array_view<T>{begin() + pos, begin() + pos + length};
     }
     constexpr array_view<T> slice_before(check_bound_t, size_type const pos) const
     {
-        if (pos >= length_) {
-            throw std::out_of_range("array_view::slice()");
-        }
-        return array_view<T>{begin(), begin() + pos};
+        return (pos >= length_)
+            ? throw std::out_of_range("array_view::slice()")
+            : array_view<T>{begin(), begin() + pos};
     }
     constexpr array_view<T> slice_after(check_bound_t, size_type const pos) const
     {
-        if (pos >= length_) {
-            throw std::out_of_range("array_view::slice()");
-        }
-        return array_view<T>{begin() + pos, end()};
+        return (pos >= length_)
+            ? throw std::out_of_range("array_view::slice()")
+            : array_view<T>{begin() + pos, end()};
     }
     // }}}
     // not check bound {{{
@@ -345,27 +343,24 @@ public:
     // check bound {{{
     constexpr array_view<T> slice(check_bound_t, iterator start, iterator last) const
     {
-        if ( start >= end() ||
+        return ( start >= end() ||
              last > end() ||
              start > last ||
-             static_cast<size_t>(std::distance(start, last > end() ? end() : last)) > length_ - std::distance(begin(), start) ) {
-            throw std::out_of_range("array_view::slice()");
-        }
-        return array_view<T>{start, last > end() ? end() : last};
+             static_cast<size_t>(std::distance(start, last > end() ? end() : last)) > length_ - std::distance(begin(), start) )
+            ? throw std::out_of_range("array_view::slice()")
+            : array_view<T>{start, last > end() ? end() : last};
     }
     constexpr array_view<T> slice_before(check_bound_t, iterator const pos) const
     {
-        if (pos < begin() || pos > end()) {
-            throw std::out_of_range("array_view::slice()");
-        }
-        return array_view<T>{begin(), pos > end() ? end() : pos};
+        return (pos < begin() || pos > end())
+            ? throw std::out_of_range("array_view::slice()")
+            : array_view<T>{begin(), pos > end() ? end() : pos};
     }
     constexpr array_view<T> slice_after(check_bound_t, iterator const pos) const
     {
-        if (pos < begin() || pos > end()) {
-            throw std::out_of_range("array_view::slice()");
-        }
-        return array_view<T>{pos < begin() ? begin() : pos, end()};
+        return (pos < begin() || pos > end())
+            ? throw std::out_of_range("array_view::slice()")
+            : array_view<T>{pos < begin() ? begin() : pos, end()};
     }
     // }}}
     // not check bound {{{
@@ -416,23 +411,26 @@ private:
 
 // compare operators {{{
 namespace detail {
+    template< class ArrayL, class ArrayR, class IterL, class IterR>
+    inline constexpr
+    bool operator_equal_impl(ArrayL const& lhs, size_t const lhs_size, ArrayR const& rhs, size_t const rhs_size, IterL const litr, IterR const ritr)
+    {
+        return (litr != std::end(lhs))
+            ? (
+                !(*litr == *ritr)
+                    ? false
+                    : operator_equal_impl(lhs, lhs_size, rhs, rhs_size, std::next(litr), std::next(ritr))
+                )
+            : true;
+    }
+    
     template< class ArrayL, class ArrayR >
     inline constexpr
     bool operator_equal_impl(ArrayL const& lhs, size_t const lhs_size, ArrayR const& rhs, size_t const rhs_size)
     {
-        if (lhs_size != rhs_size) {
-            return false;
-        }
-
-        auto litr = std::begin(lhs);
-        auto ritr = std::begin(rhs);
-        for (; litr != std::end(lhs); ++litr, ++ritr) {
-            if (!(*litr == *ritr)) {
-                return false;
-            }
-        }
-
-        return true;
+        return (lhs_size != rhs_size)
+            ? false
+            : operator_equal_impl(lhs, lhs_size, rhs, rhs_size, std::begin(lhs), std::begin(rhs));
     }
 } // namespace detail
 
